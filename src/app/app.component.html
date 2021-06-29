@@ -1,0 +1,49 @@
+<section class="m-4">
+  <div class="field">
+    <label class="label">Number of Nodes</label>
+    <div class="control">
+      <input class="input" maxlength="5" value="100" #treeSize />
+    </div>
+    <div class="field">
+      <label class="label">Number of Words in Node Names</label>
+      <div class="control">
+        <input class="input" maxlength="1" value="3" #nodeNameSize />
+      </div>
+    </div>
+  </div>
+  <button
+    (click)="init(treeSize.value, nodeNameSize.value)"
+    class="button is-primary mr-2"
+  >
+    Generate Tree
+  </button>
+  <button
+    (click)="init(treeSize.value, nodeNameSize.value, true)"
+    class="button is-primary"
+  >
+    Generate & Download
+  </button>
+
+  <div class="file is-primary mt-4">
+    <label class="file-label">
+      <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)"/>
+      <span class="file-cta">
+        <span class="file-label">
+          Upload file…
+        </span>
+      </span>
+    </label>
+  </div>
+</section>
+<section class="m-4" *ngIf="nodes | async as n">
+  <div class="has-text-white has-background-black p-3">
+    <div class="is-flex-grow-1">The Tree</div>
+    <div class="is-size-7">{{generatedTS}}</div>
+  </div>
+  <tree-root
+    #treeRoot
+    [nodes]="n"
+    [options]="options"
+    class="reverse"
+  ></tree-root>
+</section>
