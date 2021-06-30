@@ -1,49 +1,41 @@
 <section class="m-4">
-  <div class="field">
-    <label class="label">Number of Nodes</label>
-    <div class="control">
-      <input class="input" maxlength="5" value="100" #treeSize />
-    </div>
-    <div class="field">
-      <label class="label">Number of Words in Node Names</label>
-      <div class="control">
-        <input class="input" maxlength="1" value="3" #nodeNameSize />
-      </div>
-    </div>
-  </div>
-  <button
-    (click)="init(treeSize.value, nodeNameSize.value)"
-    class="button is-primary mr-2"
-  >
-    Generate Tree
-  </button>
-  <button
-    (click)="init(treeSize.value, nodeNameSize.value, true)"
-    class="button is-primary"
-  >
-    Generate & Download
-  </button>
-
-  <div class="file is-primary mt-4">
+  <form novalidate>
+    <div class="field has-addons has-addons-centered">
+  <p class="control">
+    <input name="numNodes" [(ngModel)]="genTree.numNodes" class="input" maxlength="5"/>
+  </p>
+  <p class="control p-2">nodes with</p>
+  <p class="control">
+    <span class="select">
+      <select name="numWords" [(ngModel)]="genTree.numWords">
+        <option value="1">short names</option>
+        <option value="2">medium names</option>
+        <option value="3">long names</option>
+      </select>
+    </span>
+  </p>
+  <p class="control"><button (click)="gen()" class="button is-primary">Generate</button></p>
+  <p class="control"><button (click)="gen(true)" class="button is-info"> & Download</button></p>
+  <p class="file is-warning ml-2">
     <label class="file-label">
-      <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)"/>
+      <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)" />
       <span class="file-cta">
         <span class="file-label">
           Upload file…
         </span>
       </span>
     </label>
-  </div>
+  </p>
+</div>
+</form>
 </section>
 <section class="m-4" *ngIf="nodes | async as n">
   <div class="has-text-white has-background-black p-3">
     <div class="is-flex-grow-1">The Tree</div>
     <div class="is-size-7">{{generatedTS}}</div>
   </div>
-  <tree-root
-    #treeRoot
-    [nodes]="n"
-    [options]="options"
-    class="reverse"
-  ></tree-root>
+  <input class="input mt-4 mb-4" id="filter" #filter (keyup)="treeRoot.treeModel.filterNodes(filter.value)"
+    placeholder="filter nodes" />
+  <tree-root #treeRoot [nodes]="n" [options]="options" class="reverse">
+  </tree-root>
 </section>
