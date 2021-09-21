@@ -16,6 +16,7 @@
   </p>
   <p class="control"><button (click)="gen()" class="button is-primary">Generate</button></p>
   <p class="control"><button (click)="gen(true)" class="button is-info"> & Download</button></p>
+  <p class="control"><button (click)="gen(true, true)" class="button is-info"> & Download (CSV)</button></p>
   <p class="file is-warning ml-2">
     <label class="file-label">
       <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)" />

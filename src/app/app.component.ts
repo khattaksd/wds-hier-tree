@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
     numNodes: 1000,
     numWords: 2,
     download: false,
+    csv: false,
   };
   gen$ = new Subject();
   generatedTS = new Date().toISOString();
@@ -22,6 +23,8 @@ export class AppComponent implements OnInit {
   private nodesSubj = new BehaviorSubject<TreeNode[]>(null);
   nodes: Observable<TreeNode[]> = this.nodesSubj.asObservable();
   options: ITreeOptions = {
+    idField: 'value',
+    displayField: 'code',
     useCheckbox: true,
   };
 
@@ -29,8 +32,9 @@ export class AppComponent implements OnInit {
     this.gen$.subscribe(() => this.init());
   }
 
-  gen(download = false) {
+  gen(download = false, csv = false) {
     this.genTree.download = download;
+    this.genTree.csv = csv;
     this.gen$.next();
   }
 
@@ -38,21 +42,25 @@ export class AppComponent implements OnInit {
     this.generatedTS = new Date().toISOString();
     const tsize = Math.min(this.genTree.numNodes, 99999);
     const nsize = Math.min(this.genTree.numWords, 9);
-    const root: TreeNode = { id: 0, name: 'Root', nameLC: 'root' };
+    const root: TreeNode = { value: null, code: 'ROOT' };
     const nodes: TreeNode[] = [root];
     for (let i = 0; i < tsize; i++) {
       const parent: TreeNode = nodes[(Math.random() * nodes.length) | 0];
       let nodeName = faker.name.findName();
       if (this.genTree.numWords == 2) {
-          nodeName = nodeName + ' ' + faker.name.findName();
+        nodeName = nodeName + ' ' + faker.name.findName();
       } else if (this.genTree.numWords == 3) {
-        nodeName = nodeName + ' ' + faker.name.findName() + ' ' + faker.name.findName();
+        nodeName =
+          nodeName + ' ' + faker.name.findName() + ' ' + faker.name.findName();
       }
-      // + ' ' + faker.name.findName();
+      const value = nodeName
+        .substring(0, 5)
+        .replace(/[^a-zA-Z]/g, '')
+        .toUpperCase();
       const child: TreeNode = {
-        id: nodes.length,
-        name: nodeName,
-        nameLC: nodeName.toLocaleLowerCase(),
+        value: value.padEnd(5, i + '1234'),
+        code: nodeName,
+        parent: parent.value,
       };
       if (parent.children) parent.children.push(child);
       else parent.children = [child];
@@ -60,11 +68,25 @@ export class AppComponent implements OnInit {
     }
     this.nodesSubj.next(root.children);
     this.generatedTS = new Date().toISOString();
+    var blob: Blob;
+    var filename: string;
     if (this.genTree.download) {
-      var blob = new Blob([JSON.stringify(root.children)], {
-        type: 'text/plain;charset=utf-8',
-      });
-      saveAs(blob, `genearated_${this.generatedTS}.json`);
+      if (this.genTree.csv) {
+        let csvlines = 'code,value,parent\r\n';
+        nodes.forEach((n) => {
+          csvlines += n.value + ',' + n.code;
+          if (n.parent) csvlines += ',' + n.parent;
+          csvlines += '\r\n';
+        });
+        blob = new Blob([csvlines], { type: 'data:text/csv;charset=utf-8' });
+        filename = `genearated_${this.generatedTS}.csv`;
+      } else {
+        blob = new Blob([JSON.stringify(root.children)], {
+          type: 'text/plain;charset=utf-8',
+        });
+        filename = `genearated_${this.generatedTS}.json`;
+      }
+      saveAs(blob, filename);
     }
     console.log('init done');
   }
@@ -75,16 +97,11 @@ export class AppComponent implements OnInit {
     fileReader.readAsText(this.selectedFile, 'UTF-8');
     fileReader.onload = () => {
       const r = JSON.parse(fileReader.result.toString());
-      this.generatedTS = 'file uploaded'
+      this.generatedTS = 'file uploaded';
       this.nodesSubj.next(r);
     };
     fileReader.onerror = (error) => {
       console.log(error);
     };
   }
-
-  filterFn(value: string, treeModel: TreeModel) {
-    treeModel.filterNodes((node: TreeNode) => node.nameLC.includes(value.toLocaleLowerCase()));
-  }
-
 }
