@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
     var filename: string;
     if (this.genTree.download) {
       if (this.genTree.csv) {
-        let csvlines = 'code,value,parent\r\n';
+        let csvlines = 'value,code,parent\r\n';
         //skip ROOT node by starting at index 1
         for (let index = 1; index < nodes.length; index++) {
           const n = nodes[index];
