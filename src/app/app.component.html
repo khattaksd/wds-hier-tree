@@ -4,7 +4,7 @@
   <p class="control">
     <input name="numNodes" [(ngModel)]="genTree.numNodes" class="input" maxlength="5"/>
   </p>
-  <p class="control p-2">nodes with</p>
+  <p class="control p-2">nodes </p>
   <p class="control">
     <span class="select">
       <select name="numWords" [(ngModel)]="genTree.numWords">
@@ -15,14 +15,16 @@
     </span>
   </p>
   <p class="control"><button (click)="gen()" class="button is-primary">Generate</button></p>
-  <p class="control"><button (click)="gen(true)" class="button is-info"> & Download</button></p>
-  <p class="control"><button (click)="gen(true, true)" class="button is-info"> & Download (CSV)</button></p>
+  <p class="control p-2">&download</p>
+  <p class="control"><button (click)="gen(true)" class="button is-info">json</button></p>
+  <p class="control p-2"> or </p>
+  <p class="control"><button (click)="gen(true, true)" class="button is-info">csv</button></p>
   <p class="file is-warning ml-2">
     <label class="file-label">
       <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)" />
       <span class="file-cta">
         <span class="file-label">
-          Upload file…
+          Upload JSON File
         </span>
       </span>
     </label>
