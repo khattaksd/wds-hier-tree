@@ -54,11 +54,11 @@ export class AppComponent implements OnInit {
           nodeName + ' ' + faker.name.findName() + ' ' + faker.name.findName();
       }
       const value = nodeName
-        .substring(0, 5)
+        .substring(0, 4)
         .replace(/[^a-zA-Z]/g, '')
         .toUpperCase();
       const child: TreeNode = {
-        value: value.padEnd(5, i + '1234'),
+        value: value.padEnd(6, i + '1234'),
         code: nodeName,
         parent: parent.value,
       };
