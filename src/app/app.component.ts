@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
     const nsize = Math.min(this.genTree.numWords, 9);
     const root: TreeNode = { value: null, code: 'ROOT' };
     const nodes: TreeNode[] = [root];
+    const padInt = tsize.toString().length + 1;
     for (let i = 0; i < tsize; i++) {
       const parent: TreeNode = nodes[(Math.random() * nodes.length) | 0];
       let nodeName = faker.name.findName();
@@ -53,12 +54,8 @@ export class AppComponent implements OnInit {
         nodeName =
           nodeName + ' ' + faker.name.findName() + ' ' + faker.name.findName();
       }
-      const value = nodeName
-        .substring(0, 4)
-        .replace(/[^a-zA-Z]/g, '')
-        .toUpperCase();
       const child: TreeNode = {
-        value: value.padEnd(6, i + '1234'),
+        value: i.toString().padEnd(padInt, 'WT'),
         code: nodeName,
         parent: parent.value,
       };
