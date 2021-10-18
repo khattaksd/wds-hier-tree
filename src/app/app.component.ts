@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
   genTree = {
     numNodes: 1000,
     numWords: 2,
+    maxLevels: 5,
     download: false,
     csv: false,
   };
@@ -41,12 +42,11 @@ export class AppComponent implements OnInit {
   init() {
     this.generatedTS = new Date().toISOString();
     const tsize = Math.min(this.genTree.numNodes, 99999);
-    const nsize = Math.min(this.genTree.numWords, 9);
-    const root: TreeNode = { value: null, code: 'ROOT' };
+    const root: TreeNode = { value: null, code: 'ROOT', level: 0 };
     const nodes: TreeNode[] = [root];
     const padInt = tsize.toString().length + 1;
     for (let i = 0; i < tsize; i++) {
-      const parent: TreeNode = nodes[(Math.random() * nodes.length) | 0];
+      const parent: TreeNode = this.getRandomNodeAboveLevel(nodes, this.genTree.maxLevels -1);
       let nodeName = faker.name.findName();
       if (this.genTree.numWords == 2) {
         nodeName = nodeName + ' ' + faker.name.findName();
@@ -58,6 +58,7 @@ export class AppComponent implements OnInit {
         value: i.toString().padEnd(padInt, 'WT'),
         code: nodeName,
         parent: parent.value,
+        level: parent.level + 1,
       };
       if (parent.children) parent.children.push(child);
       else parent.children = [child];
@@ -102,5 +103,14 @@ export class AppComponent implements OnInit {
     fileReader.onerror = (error) => {
       console.log(error);
     };
+  }
+
+  getRandomNodeAboveLevel(nodes: TreeNode[], level: number) {
+    let retval = null;
+    while (retval === null) {
+      const n = nodes[(Math.random() * nodes.length) | 0];
+      if (n.level <= level) retval = n;
+    }
+    return retval;
   }
 }

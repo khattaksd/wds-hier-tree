@@ -1,11 +1,27 @@
-<section class="m-4">
-  <form novalidate>
-    <div class="field has-addons has-addons-centered">
-  <p class="control">
-    <input name="numNodes" [(ngModel)]="genTree.numNodes" class="input" maxlength="5"/>
-  </p>
-  <p class="control p-2">nodes </p>
-  <p class="control">
+<form novalidate>
+  <section class="m-4">
+    <span class="select">
+      <select name="numNodes" [(ngModel)]="genTree.numNodes">
+        <option
+          *ngFor="
+            let o of [100, 500, 1000, 5000, 10000, 15000, 20000, 30000, 50000]
+          "
+          value="{{ o }}"
+        >
+          {{ o }} nodes
+        </option>
+      </select>
+    </span>
+    <span class="select">
+      <select name="maxLevels" [(ngModel)]="genTree.maxLevels">
+        <option
+          *ngFor="let o of [2, 3, 4, 5, 6, 7, 8, 9, 10]"
+          value="{{ o }}"
+        >
+          max depth {{ o }}
+        </option>
+      </select>
+    </span>
     <span class="select">
       <select name="numWords" [(ngModel)]="genTree.numWords">
         <option value="1">short names</option>
@@ -13,32 +29,42 @@
         <option value="3">long names</option>
       </select>
     </span>
-  </p>
-  <p class="control"><button (click)="gen()" class="button is-primary">Generate</button></p>
-  <p class="control p-2">&download</p>
-  <p class="control"><button (click)="gen(true)" class="button is-info">json</button></p>
-  <p class="control p-2"> or </p>
-  <p class="control"><button (click)="gen(true, true)" class="button is-info">csv</button></p>
-  <p class="file is-warning ml-2">
-    <label class="file-label">
-      <input class="file-input" type="file" name="resume" (change)="onFileChanged($event)" />
-      <span class="file-cta">
-        <span class="file-label">
-          Upload JSON File
+  </section>
+  <section class="m-4">
+    <button (click)="gen()" class="button is-primary">Generate</button>
+    <button (click)="gen(true, true)" class="button is-info ml-1">
+      Generate + CSV
+    </button>
+    <button (click)="gen(true)" class="button is-info ml-1">
+      Generate + JSON
+    </button>
+    <p class="file is-warning mt-2">
+      <label class="file-label">
+        <input
+          class="file-input"
+          type="file"
+          name="resume"
+          (change)="onFileChanged($event)"
+        />
+        <span class="file-cta">
+          <span class="file-label"> Upload JSON File </span>
         </span>
-      </span>
-    </label>
-  </p>
-</div>
+      </label>
+    </p>
+  </section>
 </form>
-</section>
 <section class="m-4" *ngIf="nodes | async as n">
   <div class="has-text-white has-background-black p-3">
     <div class="is-flex-grow-1">The Tree</div>
-    <div class="is-size-7">{{generatedTS}}</div>
+    <div class="is-size-7">{{ generatedTS }}</div>
   </div>
-  <input class="input mt-4 mb-4" id="filter" #filter (keyup)="treeRoot.treeModel.filterNodes(filter.value)"
-    placeholder="filter nodes" />
+  <input
+    class="input mt-4 mb-4"
+    id="filter"
+    #filter
+    (keyup)="treeRoot.treeModel.filterNodes(filter.value)"
+    placeholder="filter nodes"
+  />
   <tree-root #treeRoot [nodes]="n" [options]="options" class="reverse">
   </tree-root>
 </section>
